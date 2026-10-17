@@ -3,5 +3,5 @@ service:
   nodePort: 30082
 page:
   environment: staging
-  version: "v1.0"
-  checkoutMode: multi-step
+  version: "v2.0"
+  checkoutMode: one-click
