@@ -2,55 +2,31 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 source ./scripts/_lib.sh
-if [[ $# -ne 2 || ! "$1" =~ ^v[12]$ || ! "$2" =~ ^v[12]$ ]]; then
-  echo 'Usage: ./scripts/verify.sh v1|v2 v1|v2  (staging-version production-version)' >&2
-  exit 1
-fi
 check_context
-# Sync/Health reporting is eventually consistent; wait rather than failing immediately.
-wait_for_argocd() {
-  local app="$1" deadline=$((SECONDS + 180)) sync health
-  while (( SECONDS < deadline )); do
-    sync="$(kubectl -n argocd get application "$app" -o jsonpath='{.status.sync.status}' 2>/dev/null || true)"
-    health="$(kubectl -n argocd get application "$app" -o jsonpath='{.status.health.status}' 2>/dev/null || true)"
-    if [[ "$sync" == Synced && "$health" == Healthy ]]; then
-      echo "[PASS] $app: Synced / Healthy"
-      return 0
+if [[ $# -ne 2 || ! "$1" =~ ^v[12]$ || ! "$2" =~ ^v[12]$ ]]; then
+  echo 'Usage: ./scripts/verify.sh v1|v2 v1|v2' >&2; exit 2
+fi
+for spec in "staging:$1:8082:30082" "prod:$2:8081:30081"; do
+  IFS=: read -r env ver port nodeport <<< "$spec"
+  ns="flowbase-$env"
+  desired_version="$(awk '/^  version: v[12]$/ {print $2}' "charts/flowbase-web/values-$env.yaml")"
+  [[ "$desired_version" == "$ver" ]] || { echo "[FAIL] GitOps $env values expect $desired_version, not $ver" >&2; exit 1; }
+  actual_port="$(kubectl -n "$ns" get svc flowbase-web -o jsonpath='{.spec.ports[0].nodePort}')"
+  [[ "$actual_port" == "$nodeport" ]] || { echo "[FAIL] $env NodePort $actual_port" >&2; exit 1; }
+  actual_image="$(kubectl -n "$ns" get deploy flowbase-web -o jsonpath='{.spec.template.spec.containers[0].image}')"
+  [[ "$actual_image" == "flowbase-web:$ver" ]] || { echo "[FAIL] $env image is $actual_image, expected flowbase-web:$ver" >&2; exit 1; }
+  pull_policy="$(kubectl -n "$ns" get deploy flowbase-web -o jsonpath='{.spec.template.spec.containers[0].imagePullPolicy}')"
+  [[ "$pull_policy" == Never ]] || { echo "[FAIL] $env pullPolicy=$pull_policy, expected Never" >&2; exit 1; }
+  kubectl -n "$ns" rollout status deployment/flowbase-web --timeout=120s
+  ok=0
+  for attempt in {1..24}; do
+    sync="$(kubectl -n argocd get application "flowbase-$env" -o jsonpath='{.status.sync.status}' 2>/dev/null || true)"
+    health="$(kubectl -n argocd get application "flowbase-$env" -o jsonpath='{.status.health.status}' 2>/dev/null || true)"
+    if [[ "$sync" == Synced && "$health" == Healthy ]] &&        curl -fsS --max-time 3 "http://localhost:$port/version.json" 2>/dev/null |        python3 -c 'import json,sys; assert json.load(sys.stdin)["version"]==sys.argv[1]' "$ver" 2>/dev/null; then
+      ok=1; break
     fi
-    printf '[WAIT] %s: %s / %s\n' "$app" "${sync:-Unknown}" "${health:-Unknown}"
     sleep 5
   done
-  echo "[FAIL] $app did not become Synced/Healthy (last: $sync / $health). Open UI to inspect Diff/Events." >&2
-  return 1
-}
-wait_for_html() {
-  local url="$1" ver="$2" mode="$3" deadline=$((SECONDS + 90)) html
-  while (( SECONDS < deadline )); do
-    html="$(curl --connect-timeout 2 --max-time 5 -fsS "$url" 2>/dev/null || true)"
-    if [[ "$html" == *"data-version=\"${ver}.0\""* && "$html" == *"data-mode=\"${mode}\""* ]]; then
-      echo "[PASS] $url: ${ver}.0 / ${mode}"
-      return 0
-    fi
-    echo "[WAIT] $url is not serving expected ${ver}.0 / ${mode} yet"
-    sleep 3
-  done
-  echo "[FAIL] $url still does not have expected version; check NodePort, Pod and Git values." >&2
-  return 1
-}
-for item in "flowbase-staging:$1:8082:30082" "flowbase-prod:$2:8081:30081"; do
-  IFS=: read -r ns ver hostport nodeport <<< "$item"
-  echo "== $ns / $ver =="
-  actual_port="$(kubectl -n "$ns" get service flowbase-web -o jsonpath='{.spec.ports[0].nodePort}')"
-  [[ "$actual_port" == "$nodeport" ]] || { echo "[FAIL] NodePort is $actual_port, expected $nodeport" >&2; exit 1; }
-  kubectl -n "$ns" rollout status deployment/flowbase-web --timeout=120s
-  image="$(kubectl -n "$ns" get deployment flowbase-web -o jsonpath='{.spec.template.spec.containers[0].image}')"
-  replicas="$(kubectl -n "$ns" get deployment flowbase-web -o jsonpath='{.spec.replicas}')"
-  [[ "$image" == 'nginx:stable-alpine' && "$replicas" == 1 ]] || {
-    echo "[FAIL] $ns still has image=$image replicas=$replicas (expected nginx:stable-alpine / 1)" >&2
-    exit 1
-  }
-  wait_for_argocd "$ns"
-  if [[ "$ver" == v1 ]]; then mode='multi-step'; else mode='one-click'; fi
-  wait_for_html "http://localhost:$hostport" "$ver" "$mode"
+  [[ "$ok" == 1 ]] || { echo "[FAIL] $env: HTTP v$ver or Synced/Healthy check failed" >&2; exit 1; }
+  echo "[PASS] flowbase-$env / $ver / flowbase-web:$ver / imagePullPolicy=Never / Synced Healthy / HTTP OK"
 done
-echo '[PASS] Both environments, rollout, GitOps states, image/replicas and live HTTP versions verified.'

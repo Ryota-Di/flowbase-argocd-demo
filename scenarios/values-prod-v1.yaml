@@ -1,7 +1,0 @@
-replicaCount: 1
-service:
-  nodePort: 30081
-page:
-  environment: prod
-  version: "v1.0"
-  checkoutMode: multi-step

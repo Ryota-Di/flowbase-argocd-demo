@@ -1,7 +1,8 @@
 replicaCount: 1
+image:
+  repository: flowbase-web
+  tag: v1
+release:
+  version: v1
 service:
   nodePort: 30082
-page:
-  environment: staging
-  version: "v2.0"
-  checkoutMode: one-click
