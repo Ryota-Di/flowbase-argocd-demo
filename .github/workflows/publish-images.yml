@@ -1,0 +1,54 @@
+name: Publish FlowBase container images
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - '.github/workflows/publish-images.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        variant: [v1, v2]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Inspect app source
+        run: |
+          python3 tests/app_smoke.py
+          node --check app/v1/main.js
+          node --check app/v2/main.js
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1 # v3, pinned
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Define lowercase image repository
+        id: image
+        shell: bash
+        run: |
+          echo "name=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/flowbase-web" >> "$GITHUB_OUTPUT"
+      - name: Build and push ${{ matrix.variant }} for amd64 and arm64
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4 # pinned
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          build-args: APP_VARIANT=${{ matrix.variant }}
+          push: true
+          tags: ${{ steps.image.outputs.name }}:${{ matrix.variant }}-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
