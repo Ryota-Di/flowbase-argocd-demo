@@ -1,0 +1,15 @@
+.DS_Store
+__pycache__/
+*.pyc
+.env
+.venv/
+# Private material must never be placed in this public demo repository.
+.env.*
+*.pem
+*.p12
+*.pfx
+*.key
+*.kubeconfig
+id_rsa
+id_ed25519
+credentials.json

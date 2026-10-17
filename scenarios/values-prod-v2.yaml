@@ -1,0 +1,7 @@
+replicaCount: 1
+service:
+  nodePort: 30081
+page:
+  environment: prod
+  version: "v2.0"
+  checkoutMode: one-click

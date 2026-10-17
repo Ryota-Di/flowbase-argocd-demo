@@ -1,0 +1,6 @@
+apiVersion: v2
+name: flowbase-web
+description: FlowBase demo web app for Argo CD
+version: 0.1.0
+appVersion: "demo"
+type: application

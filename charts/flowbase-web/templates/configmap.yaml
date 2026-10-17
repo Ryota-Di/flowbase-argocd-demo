@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flowbase-web-page
+data:
+  index.html: |
+    <!doctype html>
+    <html lang="ja">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>FlowBase Checkout — {{ .Values.page.environment }}</title>
+      <style>
+        body{font-family:system-ui,-apple-system,sans-serif;background:#f5f7fa;color:#202c38;margin:0;padding:36px}
+        main{max-width:620px;margin:auto;background:white;padding:32px;border:1px solid #dce5ec;border-radius:14px;box-shadow:0 6px 20px #27364710}
+        .tag{color:#52647a;font-size:13px;font-weight:700;letter-spacing:.06em}
+        h1{font-size:27px;margin:8px 0 20px}
+        .product{padding:17px;background:#f7f9fb;border-radius:9px;display:flex;justify-content:space-between;gap:16px}
+        button{background:#1766b2;color:white;border:0;border-radius:7px;padding:13px 18px;cursor:pointer;font-weight:700;margin-top:20px}
+        button:hover{background:#0d4f8e}#result{margin-top:18px;font-weight:700}
+        .small{font-size:13px;color:#667487;margin-top:22px} .pill{display:inline-block;padding:4px 8px;border-radius:12px;background:#e4eff8}
+      </style>
+    </head>
+    <body>
+      <main id="checkout" data-version="{{ .Values.page.version }}" data-mode="{{ .Values.page.checkoutMode }}">
+        <div class="tag">FLOWBASE / {{ .Values.page.environment | upper }} / {{ .Values.page.version }}</div>
+        <h1>オンラインストア：購入確認</h1>
+        <div class="product"><span>デモ用ワイヤレスイヤホン</span><strong>¥12,800</strong></div>
+        {{- if eq .Values.page.checkoutMode "one-click" }}
+        <p><span class="pill">NEW：ワンクリック購入</span></p>
+        <p>購入フローを簡略化。ボタン1回で購入完了画面を表示します。</p>
+        <button id="next" type="button">1クリックで購入する</button>
+        {{- else }}
+        <p><span class="pill">従来フロー</span></p>
+        <p>配送先・支払方法・注文内容を順番に確認します。</p>
+        <button id="next" type="button">1. 配送先を確認</button>
+        {{- end }}
+        <p id="result" role="status" aria-live="polite">未購入</p>
+        <p class="small">UI操作のみのデモ。実際の購入・決済・個人情報送信は行いません。</p>
+      </main>
+      <script>
+        (() => {
+          const root = document.getElementById('checkout');
+          const button = document.getElementById('next');
+          const result = document.getElementById('result');
+          let step = 0;
+          const steps = ['2. 支払方法を確認', '3. 注文内容を確認', '注文デモ完了（3ステップ）'];
+          button.addEventListener('click', () => {
+            if (root.dataset.mode === 'one-click') {
+              result.textContent = '注文デモ完了（1クリック）';
+              button.disabled = true;
+              return;
+            }
+            if (step < 2) {
+              button.textContent = steps[step];
+              result.textContent = `ステップ ${step + 1} を確認しました`;
+              step += 1;
+            } else {
+              result.textContent = steps[2];
+              button.disabled = true;
+            }
+          });
+        })();
+      </script>
+    </body>
+    </html>

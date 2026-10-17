@@ -1,0 +1,12 @@
+replicaCount: 1
+image:
+  repository: nginx
+  tag: stable-alpine
+  pullPolicy: IfNotPresent
+service:
+  type: NodePort
+  nodePort: 30082
+page:
+  environment: staging
+  version: "v1.0"
+  checkoutMode: multi-step

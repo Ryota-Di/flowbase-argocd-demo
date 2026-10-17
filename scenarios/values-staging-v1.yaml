@@ -1,0 +1,7 @@
+replicaCount: 1
+service:
+  nodePort: 30082
+page:
+  environment: staging
+  version: "v1.0"
+  checkoutMode: multi-step
