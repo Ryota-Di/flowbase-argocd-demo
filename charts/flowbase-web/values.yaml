@@ -1,12 +1,8 @@
 replicaCount: 1
 image:
-  repository: nginx
-  tag: stable-alpine
-  pullPolicy: IfNotPresent
+  repository: flowbase-web
+  tag: v1
+release:
+  version: v1
 service:
-  type: NodePort
   nodePort: 30082
-page:
-  environment: staging
-  version: "v1.0"
-  checkoutMode: multi-step

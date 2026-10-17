@@ -3,11 +3,10 @@ kind: Service
 metadata:
   name: flowbase-web
 spec:
-  selector:
-    app: flowbase-web
-  type: {{ .Values.service.type }}
+  selector: {app: flowbase-web}
+  type: NodePort
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
       nodePort: {{ .Values.service.nodePort }}

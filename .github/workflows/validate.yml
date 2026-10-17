@@ -1,22 +1,15 @@
-name: Validate FlowBase manifests
+name: Validate GitOps deployment configuration
 on:
   pull_request:
-    paths:
-      - 'charts/**'
-      - 'scenarios/**'
-      - 'kind-config.yaml'
-      - 'scripts/**'
-      - 'tests/**'
-      - '.github/workflows/validate.yml'
   push:
     branches: [main]
+permissions:
+  contents: read
 jobs:
-  helm-and-shell:
+  validate:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: azure/setup-helm@v4.3.0
         with:
           version: v3.19.0
@@ -24,14 +17,8 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install 'pyyaml>=6,<7'
-      - name: Static configuration checks
-        run: |
-          python tests/static_checks.py
-          python tests/git_flow_checks.py
-          python tests/manifest_checks.py
-          python tests/checkpoints_checks.py
-      - name: Render + lint staging and production
+      - name: Helm render / local-only pull policy checks
         run: |
           helm lint charts/flowbase-web -f charts/flowbase-web/values-staging.yaml
           helm lint charts/flowbase-web -f charts/flowbase-web/values-prod.yaml
-          python tests/render_checks.py
+          python tests/gitops_checks.py
