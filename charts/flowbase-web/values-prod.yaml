@@ -1,8 +1,9 @@
+environment: prod
 replicaCount: 1
 image:
   repository: flowbase-web
-  tag: v2
+  tag: v1
 release:
-  version: v2
+  version: v1
 service:
   nodePort: 30081

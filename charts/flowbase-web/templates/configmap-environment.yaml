@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flowbase-checkout-environment
+  labels:
+    app: flowbase-web
+data:
+  environment.json: |
+    {"environment": {{ .Values.environment | quote }}, "service": "checkout"}

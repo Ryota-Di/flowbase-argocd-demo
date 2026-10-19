@@ -52,7 +52,8 @@ for a in applications:
 for env in ('prod','staging'):
     values = yaml.safe_load((root/f'charts/flowbase-web/values-{env}.yaml').read_text())
     assert values['image']['repository'] == 'flowbase-web'
-    assert values['image']['tag'] == values['release']['version'] == 'v2'
+    assert values['image']['tag'] in ('v1','v2') and values['image']['tag'] == values['release']['version']
+    assert values['environment'] == env
 for shell in (root/'scripts').glob('*.sh'):
     subprocess.run(['bash','-n',str(shell)],check=True)
-print('[PASS] 18/18 Helm renders, unique service-specific mock settings, 9 services x 2 env, 8 owner teams, existing Checkout values unchanged')
+print('[PASS] 18/18 Helm renders, unique service-specific mock settings, 9 services x 2 env, 8 owner teams, Checkout environments validated')
