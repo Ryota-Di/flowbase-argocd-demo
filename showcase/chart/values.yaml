@@ -1,0 +1,14 @@
+service: demo
+environment: staging
+team: team-platform
+# One service-specific operational setting per mock; illustrative, not running workloads.
+serviceSettings:
+  auth: {key: sessionTtlMinutes, value: 30}
+  billing: {key: invoiceBatchIntervalMinutes, value: 15}
+  catalog: {key: productCacheTtlSeconds, value: 300}
+  gateway: {key: upstreamTimeoutMs, value: 3000}
+  inventory: {key: stockReservationTtlSeconds, value: 900}
+  notifications: {key: retryBackoffSeconds, value: 30}
+  orders: {key: idempotencyTtlHours, value: 24}
+  reporting: {key: metricsRefreshIntervalMinutes, value: 60}
+  search: {key: defaultResultLimit, value: 50}

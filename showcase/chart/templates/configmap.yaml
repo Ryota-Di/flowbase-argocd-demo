@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flowbase-{{ .Values.service }}-{{ .Values.environment }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.service | quote }}
+    app.kubernetes.io/part-of: flowbase
+    flowbase.example/showcase: "true"
+    flowbase.example/environment: {{ .Values.environment | quote }}
+    flowbase.example/team: {{ .Values.team | quote }}
+data:
+  service: {{ .Values.service | quote }}
+  environment: {{ .Values.environment | quote }}
+  ownerTeam: {{ .Values.team | quote }}
+  deploymentModel: "configuration-only simulation"
+  settings.yaml: |
+    service: {{ .Values.service }}
+    environment: {{ .Values.environment }}
+    releasePolicy: manual
+    settings:
+      {{ (index .Values.serviceSettings .Values.service).key }}: {{ (index .Values.serviceSettings .Values.service).value }}

@@ -1,0 +1,5 @@
+apiVersion: v2
+name: flowbase-portfolio-mock
+version: 1.0.0
+type: application
+description: ConfigMap-only mock services for FlowBase portfolio overview

@@ -1,0 +1,577 @@
+# 18 ConfigMap-only simulated apps: 9 services x 2 environments; original Checkout apps remain untouched.
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-auth-prod
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: auth
+    flowbase.example/environment: prod
+    flowbase.example/team: team-platform
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: auth
+      - name: environment
+        value: prod
+      - name: team
+        value: team-platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-prod
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-auth-staging
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: auth
+    flowbase.example/environment: staging
+    flowbase.example/team: team-platform
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: auth
+      - name: environment
+        value: staging
+      - name: team
+        value: team-platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-staging
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-billing-prod
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: billing
+    flowbase.example/environment: prod
+    flowbase.example/team: team-finance
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: billing
+      - name: environment
+        value: prod
+      - name: team
+        value: team-finance
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-prod
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-billing-staging
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: billing
+    flowbase.example/environment: staging
+    flowbase.example/team: team-finance
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: billing
+      - name: environment
+        value: staging
+      - name: team
+        value: team-finance
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-staging
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-catalog-prod
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: catalog
+    flowbase.example/environment: prod
+    flowbase.example/team: team-merchandising
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: catalog
+      - name: environment
+        value: prod
+      - name: team
+        value: team-merchandising
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-prod
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-catalog-staging
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: catalog
+    flowbase.example/environment: staging
+    flowbase.example/team: team-merchandising
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: catalog
+      - name: environment
+        value: staging
+      - name: team
+        value: team-merchandising
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-staging
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-gateway-prod
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: gateway
+    flowbase.example/environment: prod
+    flowbase.example/team: team-platform
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: gateway
+      - name: environment
+        value: prod
+      - name: team
+        value: team-platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-prod
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-gateway-staging
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: gateway
+    flowbase.example/environment: staging
+    flowbase.example/team: team-platform
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: gateway
+      - name: environment
+        value: staging
+      - name: team
+        value: team-platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-staging
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-inventory-prod
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: inventory
+    flowbase.example/environment: prod
+    flowbase.example/team: team-fulfillment
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: inventory
+      - name: environment
+        value: prod
+      - name: team
+        value: team-fulfillment
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-prod
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-inventory-staging
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: inventory
+    flowbase.example/environment: staging
+    flowbase.example/team: team-fulfillment
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: inventory
+      - name: environment
+        value: staging
+      - name: team
+        value: team-fulfillment
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-staging
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-notifications-prod
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: notifications
+    flowbase.example/environment: prod
+    flowbase.example/team: team-engagement
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: notifications
+      - name: environment
+        value: prod
+      - name: team
+        value: team-engagement
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-prod
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-notifications-staging
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: notifications
+    flowbase.example/environment: staging
+    flowbase.example/team: team-engagement
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: notifications
+      - name: environment
+        value: staging
+      - name: team
+        value: team-engagement
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-staging
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-orders-prod
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: orders
+    flowbase.example/environment: prod
+    flowbase.example/team: team-commerce
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: orders
+      - name: environment
+        value: prod
+      - name: team
+        value: team-commerce
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-prod
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-orders-staging
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: orders
+    flowbase.example/environment: staging
+    flowbase.example/team: team-commerce
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: orders
+      - name: environment
+        value: staging
+      - name: team
+        value: team-commerce
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-staging
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-reporting-prod
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: reporting
+    flowbase.example/environment: prod
+    flowbase.example/team: team-analytics
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: reporting
+      - name: environment
+        value: prod
+      - name: team
+        value: team-analytics
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-prod
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-reporting-staging
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: reporting
+    flowbase.example/environment: staging
+    flowbase.example/team: team-analytics
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: reporting
+      - name: environment
+        value: staging
+      - name: team
+        value: team-analytics
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-staging
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-search-prod
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: search
+    flowbase.example/environment: prod
+    flowbase.example/team: team-discovery
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: search
+      - name: environment
+        value: prod
+      - name: team
+        value: team-discovery
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-prod
+  syncPolicy: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flowbase-search-staging
+  namespace: argocd
+  labels:
+    flowbase.example/showcase: 'true'
+    flowbase.example/service: search
+    flowbase.example/environment: staging
+    flowbase.example/team: team-discovery
+    app.kubernetes.io/part-of: flowbase
+  annotations:
+    flowbase.example/purpose: ConfigMap-only portfolio simulation; no running workloads
+spec:
+  project: flowbase
+  source:
+    repoURL: https://github.com/Ryota-Di/flowbase-argocd-demo.git
+    targetRevision: main
+    path: showcase/chart
+    helm:
+      parameters:
+      - name: service
+        value: search
+      - name: environment
+        value: staging
+      - name: team
+        value: team-discovery
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flowbase-staging
+  syncPolicy: {}

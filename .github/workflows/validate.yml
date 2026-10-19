@@ -22,3 +22,4 @@ jobs:
           helm lint charts/flowbase-web -f charts/flowbase-web/values-staging.yaml
           helm lint charts/flowbase-web -f charts/flowbase-web/values-prod.yaml
           python tests/gitops_checks.py
+          python tests/showcase_checks.py
