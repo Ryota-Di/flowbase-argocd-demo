@@ -1,3 +1,4 @@
+environment: staging
 replicaCount: 1
 image:
   repository: flowbase-web

@@ -46,6 +46,11 @@ for env in ('staging','prod'):
    data=json.load(resp)
  except Exception as e: sys.exit(f'[FAIL] HTTP {env}: {e}')
  need(data['version']==version,f'HTTP {env} version {data["version"]} != {version}')
+ try:
+  with urllib.request.urlopen(f'http://localhost:{port}/environment.json',timeout=4) as resp:
+   env_metadata=json.load(resp)
+ except Exception as exc: sys.exit(f'[FAIL] Environment metadata {env}: {exc}')
+ need(env_metadata.get('environment')==env,f'Wrong environment metadata: {env_metadata}')
  print(f'[PASS] {name}: Git=v2 Live={version} replicas={replicas} release={annotation} Sync={sync} Health=Healthy HTTP={version}')
 for env in ('prod','staging'):
  cm=kjson('-n','flowbase-'+env,'get','configmaps','-l','flowbase.example/showcase=true')['items']

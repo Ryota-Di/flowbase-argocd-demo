@@ -14,6 +14,7 @@ spec:
       labels: {app: flowbase-web}
       annotations:
         flowbase.example/release: {{ .Values.release.version | quote }}
+        checksum/environment: {{ include (print $.Template.BasePath "/configmap-environment.yaml") . | sha256sum }}
     spec:
       securityContext:
         runAsNonRoot: true
@@ -42,6 +43,8 @@ spec:
           volumeMounts:
             - {name: tmp, mountPath: /tmp}
             - {name: cache, mountPath: /var/cache/nginx}
+            - {name: environment, mountPath: /usr/share/nginx/html/environment.json, subPath: environment.json, readOnly: true}
       volumes:
         - {name: tmp, emptyDir: {}}
         - {name: cache, emptyDir: {}}
+        - {name: environment, configMap: {name: flowbase-checkout-environment}}
